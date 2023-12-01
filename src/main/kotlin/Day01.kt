@@ -2,20 +2,21 @@ import java.io.File
 
 fun main() {
     calculate("part 1", "src/main/resources/01.txt") { it }
-    calculate("part 2", "src/main/resources/01.txt") { it.replaceWordsWithNumbers() }
+    calculate("part 2", "src/main/resources/01.txt") { it.addNumbersForWords() }
 }
 
-private fun calculate(part: String, file: String, function: (String) -> String) {
-    val input = File(file).readText()
-    val result = input.split("\n")
-        .map { function(it) }
-        .map { line -> "${line.first { it.isDigit() }}${line.last { it.isDigit() }}" }
+private fun calculate(part: String, file: String, transform: (String) -> String) {
+    val input = File(file).readLines()
+    val result = input
+        .map { transform(it) }
+        .map { line -> line.mapNotNull { it.digitToIntOrNull() } }
+        .map { line -> "${line.first()}${line.last()}" }
         .sumOf { it.toInt() }
 
     println("$part: $result")
 }
 
-private fun String.replaceWordsWithNumbers(): String = this
+private fun String.addNumbersForWords(): String = this
     .replace("one", "one1one")
     .replace("two", "two2two")
     .replace("three", "three3three")
