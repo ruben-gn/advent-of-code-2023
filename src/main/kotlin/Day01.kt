@@ -7,12 +7,10 @@ fun main() {
 
 private fun calculate(part: String, file: String, transform: (String) -> String) = File(file).readLines()
     .map { transform(it) }
-    .map(::filterDigits)
+    .map { line -> line.filter(Char::isDigit) }
     .map(::firstAndLast)
-    .map(String::toInt)
-    .let { println("$part: ${it.sum()}") }
-
-private fun filterDigits(line: String) = line.filter(Char::isDigit)
+    .sumOf(String::toInt)
+    .let { println("$part: $it") }
 
 private fun firstAndLast(line: String) = "${line.first()}${line.last()}"
 
