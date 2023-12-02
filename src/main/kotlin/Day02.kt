@@ -5,8 +5,7 @@ fun main() {
     part2()
 }
 
-fun part1() = File("src/main/resources/02.txt").readLines()
-    .map { it.split(":") }
+fun part1() = File("src/main/resources/02.txt").readLines().map { it.split(":") }
     .associate { it[0].key() to it[1].value() }
     .filter { (_, value) ->
         value.all {
@@ -17,17 +16,11 @@ fun part1() = File("src/main/resources/02.txt").readLines()
     .sum()
     .let { println("part 1: $it") }
 
-fun part2() = File("src/main/resources/02.txt").readLines()
-    .map { it.split(":") }
-    .associate { it[0].key() to it[1].value() }
-    .values
-    .map { game ->
-        listOf(
-            game.maxOf { it["red"] ?: 0 },
-            game.maxOf { it["green"] ?: 0 },
-            game.maxOf { it["blue"] ?: 0 }
-        )
-    }.sumOf { it[0] * it[1] * it[2] }
+fun part2() = File("src/main/resources/02.txt").readLines().map { it.split(":") }
+    .map { it[1].value() }
+    .sumOf { game ->
+        game.maxOf { it["red"] ?: 0 } * game.maxOf { it["green"] ?: 0 } * game.maxOf { it["blue"] ?: 0 }
+    }
     .let { println("part 2: $it") }
 
 private fun String.value(): List<Map<String, Int>> = split(";")
