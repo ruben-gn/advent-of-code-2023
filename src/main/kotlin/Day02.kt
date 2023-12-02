@@ -12,33 +12,50 @@ fun part1() = parseFromFile()
     .let { println("part 1: $it") }
 
 fun part2() = parseFromFile().values
-    .sumOf { it.max("red") * it.max("green") * it.max("blue") }
+    .sumOf { it.max(Color.Red) * it.max(Color.Green) * it.max(Color.Blue) }
     .let { println("part 2: $it") }
 
-private fun List<Map<String, Int>>.hasEnoughOfEachColor() = this.all {
-    it.hasEnough("red") && it.hasEnough("green") && it.hasEnough("blue")
+private fun Game.hasEnoughOfEachColor() = this.all {
+    it.hasEnough(Color.Red) && it.hasEnough(Color.Green) && it.hasEnough(Color.Blue)
 }
 
-private fun Map<String, Int>.hasEnough(color: String) =
-    (this[color] ?: 0) <= colors[color]!!
+private fun Round.hasEnough(color: Color) =
+    (this[color] ?: 0) <= neededByColor[color]!!
 
-private val colors = mapOf(
-    "red" to 12,
-    "green" to 13,
-    "blue" to 14
+private val neededByColor = mapOf(
+    Color.Red to 12,
+    Color.Green to 13,
+    Color.Blue to 14
 )
 
-private fun List<Map<String, Int>>.max(color: String) =
+private fun Game.max(color: Color) =
     this.maxOf { it[color] ?: 0 }
 
 private fun parseFromFile() = File("src/main/resources/02.txt").readLines().map { it.split(":") }
-    .associate { it[0].key() to it[1].value() }
+    .associate { it[0].gameId() to it[1].parseRounds() }
 
-private fun String.value(): List<Map<String, Int>> = split(";")
-    .map { round ->
-        round.split(",")
-            .map { it.trim().split(" ") }
-            .associate { it[1].trim() to it[0].trim().toInt() }
+private fun String.parseRounds(): Game = split(";")
+    .map(::parseRound)
+
+private fun parseRound(round: String) = round.split(",")
+    .map { it.trim().split(" ") }
+    .associate { Color.of(it[1]) to it[0].toInt() }
+
+private fun String.gameId(): Int = split(" ")[1].toInt()
+
+typealias Round = Map<Color, Int>
+typealias Game = List<Round>
+
+enum class Color {
+    Red, Green, Blue;
+
+    companion object {
+        fun of(color: String) = when (color.trim()) {
+            "red" -> Red
+            "green" -> Green
+            "blue" -> Blue
+            else -> throw IllegalArgumentException("Unknown color: $color")
+        }
+
     }
-
-private fun String.key(): Int = split(" ")[1].toInt()
+}
