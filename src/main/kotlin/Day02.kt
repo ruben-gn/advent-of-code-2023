@@ -12,21 +12,23 @@ fun part1() = parseFromFile()
     .let { println("part 1: $it") }
 
 fun part2() = parseFromFile().values
-    .sumOf { it.max(Color.Red) * it.max(Color.Green) * it.max(Color.Blue) }
+    .sumOf(::productOfMaximumShown)
     .let { println("part 2: $it") }
 
-private fun Game.hasEnoughOfEachColor() = this.all {
-    it.hasEnough(Color.Red) && it.hasEnough(Color.Green) && it.hasEnough(Color.Blue)
-}
+private fun productOfMaximumShown(game: Game) =
+    colors.productOf { game.max(it) }
+
+private fun Collection<Color>.productOf(function: (Color) -> Int) =
+    this.map(function).reduce { acc, i -> acc * i }
+
+private fun Game.hasEnoughOfEachColor() =
+    this.all { round -> round.hasEnoughOfEachColor() }
+
+private fun Round.hasEnoughOfEachColor() =
+    colors.all { color -> this.hasEnough(color) }
 
 private fun Round.hasEnough(color: Color) =
-    (this[color] ?: 0) <= neededByColor[color]!!
-
-private val neededByColor = mapOf(
-    Color.Red to 12,
-    Color.Green to 13,
-    Color.Blue to 14
-)
+    (this[color] ?: 0) <= color.needs
 
 private fun Game.max(color: Color) =
     this.maxOf { it[color] ?: 0 }
@@ -46,8 +48,10 @@ private fun String.gameId(): Int = split(" ")[1].toInt()
 typealias Round = Map<Color, Int>
 typealias Game = List<Round>
 
-enum class Color {
-    Red, Green, Blue;
+private val colors = Color.entries.toTypedArray().toList()
+
+enum class Color(val needs: Int) {
+    Red(12), Green(13), Blue(14);
 
     companion object {
         fun of(color: String) = when (color.trim()) {
@@ -56,6 +60,5 @@ enum class Color {
             "blue" -> Blue
             else -> throw IllegalArgumentException("Unknown color: $color")
         }
-
     }
 }
