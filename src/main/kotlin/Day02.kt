@@ -5,13 +5,13 @@ fun main() {
     part2()
 }
 
-fun part1() = parseFromFile()
+private fun part1() = parseFromFile()
     .filter { (_, value) -> value.hasEnoughOfEachColor() }
     .keys
     .sum()
     .let { println("part 1: $it") }
 
-fun part2() = parseFromFile().values
+private fun part2() = parseFromFile().values
     .sumOf(::productOfMaximumShown)
     .let { println("part 2: $it") }
 
