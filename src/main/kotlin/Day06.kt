@@ -1,8 +1,8 @@
 private val lines = readLines("06").map { it.split(":").last() }
 
 fun main() {
-    part1()
-    part2()
+    timed { part1() }
+    timed { part2() }
 }
 
 private fun part1() = lines
