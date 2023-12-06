@@ -1,14 +1,14 @@
 import kotlin.time.measureTime
 
-val lines = readLines("05-01")
-val seedToSoil = lines.dropWhile { it != "seed-to-soil map:" }.parse()
-val soilToFertilizer = lines.dropWhile { it != "soil-to-fertilizer map:" }.parse()
-val fertilizerToWater = lines.dropWhile { it != "fertilizer-to-water map:" }.parse()
-val waterToLight = lines.dropWhile { it != "water-to-light map:" }.parse()
-val lightToTemperature = lines.dropWhile { it != "light-to-temperature map:" }.parse()
-val temperatureToHumidity = lines.dropWhile { it != "temperature-to-humidity map:" }.parse()
-val humidityToLocation = lines.dropWhile { it != "humidity-to-location map:" }.parse()
-val maps = listOf(
+private val lines = readLines("05-01")
+private val seedToSoil = lines.dropWhile { it != "seed-to-soil map:" }.parse()
+private val soilToFertilizer = lines.dropWhile { it != "soil-to-fertilizer map:" }.parse()
+private val fertilizerToWater = lines.dropWhile { it != "fertilizer-to-water map:" }.parse()
+private val waterToLight = lines.dropWhile { it != "water-to-light map:" }.parse()
+private val lightToTemperature = lines.dropWhile { it != "light-to-temperature map:" }.parse()
+private val temperatureToHumidity = lines.dropWhile { it != "temperature-to-humidity map:" }.parse()
+private val humidityToLocation = lines.dropWhile { it != "humidity-to-location map:" }.parse()
+private val maps = listOf(
     seedToSoil,
     soilToFertilizer,
     fertilizerToWater,
