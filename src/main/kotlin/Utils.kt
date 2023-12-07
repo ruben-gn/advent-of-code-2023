@@ -6,8 +6,8 @@ fun <T> pr(s: T): T {
     return s
 }
 
-fun <T> T.pri(): T {
-    println(this)
+fun <T> T.pri(prefix: String = ""): T {
+    println("$prefix$this")
     return this
 }
 

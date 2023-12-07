@@ -1,15 +1,28 @@
 private val lines = readLines("07")
 
 fun main() {
-    timed { part1() }
+    timed { calculate(cardValues) { it.cards.rank() } }
+    timed { calculate(cardValues2) { it.cards.rankJ() } }
 }
 
-private fun part1() = lines.asSequence().map { it.split(" ") }
-    .map { Hand(it[0].split("").filter { card -> card.isNotEmpty() }, it[1].toLong()) }
-    .sortedWith(compareBy({ it.cards.rank() }, { it.number() }))
-    .mapIndexed { index, hand -> hand.bid * (index + 1) }
-    .sum()
-    .let { println("part 1: $it") }
+private fun List<String>.rankJ(): Int =
+    types.first { type -> type.predicate(this.replaceJokers()) }.strength
+
+private fun List<String>.replaceJokers() = this.pretendJokerIs(this.findMostCommon())
+
+private fun List<String>.pretendJokerIs(card: String) = this.map { if (it == "J") card else it }
+
+private fun List<String>.findMostCommon(): String = filter { it != "J" }
+    .groupingBy { it }.eachCount()
+    .maxByOrNull { it.value }?.key ?: first()
+
+private fun calculate(valueMap: Map<String, Int>, compareByType: (Hand) -> Comparable<*>?) =
+    lines.asSequence().map { it.split(" ") }
+        .map { Hand(it[0].split("").filter { card -> card.isNotEmpty() }, it[1].toLong()) }
+        .sortedWith(compareBy(compareByType, { it.number(valueMap) }))
+        .mapIndexed { index, hand -> hand.bid * (index + 1) }
+        .sum()
+        .let { println("part 2: $it") }
 
 private fun List<String>.rank(): Int =
     types.first { it.predicate(this) }.strength
@@ -18,7 +31,7 @@ private data class Hand(
     val cards: List<String>,
     val bid: Long
 ) {
-    fun number() = cards.map { cardValues[it] ?: 0 }.joinToString("").toLong()
+    fun number(vals: Map<String, Int>) = cards.map { vals[it] ?: 0 }.joinToString("").toLong()
 }
 
 private data class Type(
@@ -68,6 +81,21 @@ private val cardValues = mapOf(
     "9" to 18,
     "T" to 19,
     "J" to 20,
+    "Q" to 21,
+    "K" to 22,
+    "A" to 23
+)
+private val cardValues2 = mapOf(
+    "2" to 11,
+    "3" to 12,
+    "4" to 13,
+    "5" to 14,
+    "6" to 15,
+    "7" to 16,
+    "8" to 17,
+    "9" to 18,
+    "T" to 19,
+    "J" to 10, // here
     "Q" to 21,
     "K" to 22,
     "A" to 23
