@@ -1,31 +1,26 @@
 private val lines = readLines("07")
 
 fun main() {
-    timed { calculate(cardValues) { it.cards.rank() } }
-    timed { calculate(cardValues2) { it.cards.rankJ() } }
+    timed { calculate(cardValues) { it } }
+    timed { calculate(cardValues2) { it.replaceJokers() } }
 }
 
-private fun List<String>.rankJ(): Int =
-    types.first { type -> type.predicate(this.replaceJokers()) }.strength
-
-private fun List<String>.replaceJokers() = this.pretendJokerIs(this.findMostCommon())
-
-private fun List<String>.pretendJokerIs(card: String) = this.map { if (it == "J") card else it }
-
-private fun List<String>.findMostCommon(): String = filter { it != "J" }
-    .groupingBy { it }.eachCount()
-    .maxByOrNull { it.value }?.key ?: first()
-
-private fun calculate(valueMap: Map<String, Int>, compareByType: (Hand) -> Comparable<*>?) =
+private fun calculate(valueMap: Map<String, Int>, transform: (List<String>) -> List<String>) =
     lines.asSequence().map { it.split(" ") }
         .map { Hand(it[0].split("").filter { card -> card.isNotEmpty() }, it[1].toLong()) }
-        .sortedWith(compareBy(compareByType, { it.number(valueMap) }))
+        .sortedWith(compareBy({it.cards.rank(transform)}, { it.number(valueMap) }))
         .mapIndexed { index, hand -> hand.bid * (index + 1) }
         .sum()
         .let { println("part 2: $it") }
 
-private fun List<String>.rank(): Int =
-    types.first { it.predicate(this) }.strength
+private fun List<String>.rank(transform: (List<String>) -> List<String>): Int =
+    types.first { type -> type.predicate(transform(this)) }.strength
+
+private fun List<String>.replaceJokers() = this.pretendJokerIs(this.findMostCommon())
+private fun List<String>.pretendJokerIs(card: String) = this.map { if (it == "J") card else it }
+private fun List<String>.findMostCommon(): String = filter { it != "J" }
+    .groupingBy { it }.eachCount()
+    .maxByOrNull { it.value }?.key ?: first()
 
 private data class Hand(
     val cards: List<String>,
