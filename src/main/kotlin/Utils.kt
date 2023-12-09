@@ -14,3 +14,5 @@ fun <T> T.pri(prefix: String = ""): T {
 fun timed(block: () -> Unit) = println("└[${measureTime { block() }}]")
 
 fun readLines(file: String) = File("src/main/resources/$file.txt").readLines()
+
+fun List<String>.notEmpty() = this.filter { it != "" }

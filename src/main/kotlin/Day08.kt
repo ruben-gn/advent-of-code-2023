@@ -40,8 +40,6 @@ private fun Pair<String, String>.take(side: String) = when (side) {
     else -> throw IllegalArgumentException("Invalid side: $side")
 }
 
-private fun List<String>.notEmpty() = this.filter { it != "" }
-
 private fun List<String>.extractNodes() =
     with(
         this[1]
