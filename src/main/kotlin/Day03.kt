@@ -29,7 +29,7 @@ private fun part1() = coordNumbers(readFile())
     .sumOf { it.number.toInt() }
     .let { println("part 1: $it") }
 
-fun coordNumbers(lines: List<String>): List<CoordNumber> = lines
+private fun coordNumbers(lines: List<String>): List<CoordNumber> = lines
     .map {
         width = it.length - 1
         field.add(it.split("").filter { it.isNotEmpty() }.map { it.first() })
@@ -40,7 +40,7 @@ fun coordNumbers(lines: List<String>): List<CoordNumber> = lines
     .flatten()
 
 
-fun parseLine(line: List<String>, y: Int): List<CoordNumber> = line
+private fun parseLine(line: List<String>, y: Int): List<CoordNumber> = line
     .filter { it.isNotEmpty() }
     .map { it.first() }
     .foldIndexed(mutableListOf(CoordNumber(mutableListOf(), ""))) { x, acc, char ->
@@ -53,7 +53,7 @@ fun parseLine(line: List<String>, y: Int): List<CoordNumber> = line
         acc
     }.filter { it.points.isNotEmpty() }
 
-data class Point(val x: Int, val y: Int) {
+private data class Point(val x: Int, val y: Int) {
     fun neighbours(): List<Point> {
         return listOf(x - 1, x, x + 1).map { x ->
             listOf(y - 1, y, y + 1).mapNotNull { y ->
@@ -67,6 +67,6 @@ data class Point(val x: Int, val y: Int) {
     }
 }
 
-data class CoordNumber(val points: MutableList<Point>, var number: String)
+private data class CoordNumber(val points: MutableList<Point>, var number: String)
 
 private fun readFile() = File("src/main/resources/03.txt").readLines()
